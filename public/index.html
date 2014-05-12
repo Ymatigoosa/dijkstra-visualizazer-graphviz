@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="utf-8" />
+	<!--[if IE]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<title></title>
+	<meta name="keywords" content="" />
+	<meta name="description" content="" />
+	<link href="css/overcast/jquery-ui-1.10.2.custom.css" rel="stylesheet">
+	<script src="js/jquery-1.9.1.min.js"></script>
+	<script src="js/jquery-ui-1.10.2.custom.min.js"></script>
+	<script src="js/superscript.js"></script>
+	<link rel="stylesheet" href="style.css" type="text/css" media="screen, projection" />
+	<!--[if lte IE 6]><link rel="stylesheet" href="style_ie.css" type="text/css" media="screen, projection" /><![endif]-->
+</head>
+
+<body>
+
+<div id="wrapper">
+
+	<header id="header">
+		<div class="fright">
+			<h1>Алгоритм Дейкстры поиска кратчайшего пути</h1>
+		</div>
+		<div class="fleft">
+			<a href="#in">Ввод данных</a>&nbsp;|&nbsp;<a href="#out">Результат</a>&nbsp;|&nbsp;<a href="#alg">Алгоритм</a>&nbsp;|&nbsp;<a href="#help">Инструкция</a>
+		</div>
+	</header><!-- #header-->
+
+	<div class="row2">&nbsp;</div>
+	<div id="help" class="row30 section blue">
+		<h3>Инструкция</h3>
+    Программа предназначена для поиска кратчайших расстояний от одной вершины графа до всех остальных вершин, используя алгоритм Дейкстры.
+    <br />Реализована на языке node.js (серверная реализация языка JavaScript). Для реализации интерфейса использованы html,css,javascript,jquery.
+		<br /><br /><strong>Формат входных данных</strong>:
+		<br /><br />&lt;начальная вершина&gt; &lt;конечная вершина&gt; &lt;вес&gt;
+    <br />(В качестве разделителей могут выступать любые символы)
+		<br /><br /><strong>Пример входных данных</strong>:
+		<br /><br />Vlg Moskow 500
+<br />Vlg StPt 900
+<br />Moskow StPt 200
+<br />Vlg Sochi 1000
+<br />Moskow Sochi 1500
+<br />StPt Sochi 1700<br />
+	</div>
+	<div class="row2">&nbsp;</div>
+	<div id="in" class="row70 section green">
+		<h3>Ввод данных</h3>
+		<textarea id="minput" cols="40" rows="10"></textarea>
+    <p>Начальная вершина: <select id="startNode"></select></p>
+		<button id="send">Рассчитать</button>
+	</div>
+	<div class="clearfix">&nbsp;</div>
+	<div class="row2">&nbsp;</div>
+	<div id="out" class="row100 section" >
+		<h3>Результат</h3>
+		<div class="blockCenter">
+			<div class="center" id="graph_holder">
+				введите данные для рассчета...
+			</div>
+			<div class="center">
+				<span class="prevnextlink disabled" id="graph_prev">←&nbsp;Предыдущий шаг</span>
+				&nbsp;|&nbsp;
+				<span class="prevnextlink disabled" id="graph_next">Следующий шаг&nbsp;→</span>
+			</div>
+		</div>
+		</div>
+		<div class="clearfix"></div>
+		<!--<div class="blockCenter">
+			<div class="center">
+				<span class="prevnextlink" id="graph_prev">←&nbsp;Предыдущий шаг</span>
+				&nbsp;|&nbsp;
+				<span class="prevnextlink disabled" id="graph_next">Следующий шаг&nbsp;→</span>
+			</div>
+		</div>-->
+
+	<div class="clearfix">&nbsp;</div>
+	<div class="row2">&nbsp;</div>
+	<div id="alg" class="row100 section orange" ><h3>Алгоритм</h3>
+        <br />1 Если в графе присутсвуют циклы, сообщаем об ошибке
+        <br />2 Установить вес начальной вершины 0, а остальным вершинам INFINITE
+        <br />3 Выбрать вершину с минимальным весом среди неиспользованных
+        <br />4 Выбрать очередное ребро, выходящее из текущей вершины
+        <br />5 Если вес ребра плюс вес текущей вершины меньще веса конечной вершины, установить новый вес для конечной вершины: вес ребра плюс вес текущей вершины
+        <br />6 Если остались непройденные ребра, вернуться на шаг 4
+        <br />7 Если остались непройденные вершины, вернуться на шаг 3
+        <br />8 Выдать результат
+        <!--<br /><br />Реализая на языке javascript<br />
+        <pre>visualizeDijkstra = function(start) {
+
+  if( this._findLoops() ) {
+    throw 'cannot use Dijkstra for graph with loops';
+  }
+  if( !issting(start) ) {
+    throw 'bad Graph.dijkstra(start) arguments\n'+typeof(start)+'\n'+start;
+  }
+  this.nodes[start].weight = 0;
+  var result_images = [];
+  var current_node;
+  var next_node = null;
+  var current_edge;
+  var used_count = 0;
+
+  // corrent variables
+  while (used_count&lt;this.countOfNodes()-1) {
+    // finding next node
+    next_node = null;
+    for(var name in this.nodes) {
+      current_node = this.nodes[name];
+      if (current_node.state!==Node.USED &amp;&amp;
+          (next_node===null || current_node.weight &lt; next_node.weight)) {
+        next_node = current_node;
+      }
+    }
+    current_node = next_node;
+    current_node.state = Node.CURRENT;
+    this._visualizeCurrentGraphState(result_images);
+
+    // correct node weights
+    for(var end in this.adjacencyMatrix[current_node.name]) {
+      current_edge = this.adjacencyMatrix[current_node.name][end];
+      current_edge.state = Edge.CURRENT;
+      if( current_edge.weight &lt; 0 ) {
+        throw 'cannot use Dijkstra for graph with negative edge weight (for node '
+                + current_edge.start.name
+                + '-&gt;'
+                + current_edge.end.name
+                +' weight='
+                + current_edge.weight
+                + ')';
+      }
+      if(current_edge.end.weight &gt; current_edge.start.weight + current_edge.weight) {
+        current_edge.end.weight = current_edge.start.weight + current_edge.weight;
+        current_edge.end.path = current_edge.start.path.slice(0);
+        current_edge.end.path.push(current_edge);
+      }
+      this._visualizeCurrentGraphState(result_images);
+      current_edge.state = Edge.CLEAN;
+    }
+
+    // ending iteration
+    current_node.state = Node.USED;
+    used_count++;
+    this._visualizeCurrentGraphState(result_images);
+  }
+}</pre>--></div>
+	<div class="clearfix">&nbsp;</div>
+
+</div><!-- #wrapper -->
+
+</body>
+</html>
